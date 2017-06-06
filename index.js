@@ -30,7 +30,7 @@ const server = app.listen(PORT || 3000, function() {
 });
 const io = socket.listen(server);
 
-twitter.stream('statuses/filter', { track: 'javascript' }, function(stream) {
+twitter.stream('statuses/filter', { track: process.env.TRACK_SUBJECT || 'javascript' }, function(stream) {
   stream.on('data', function (data) {
       io.sockets.emit('tweet', data);
   });
