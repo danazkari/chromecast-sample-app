@@ -25,7 +25,7 @@
             const Tweet = ({tweet: {text, user: { name, screen_name, profile_image_url_https }}}) => (
                 <div className="tweet-card">
                     <div className="tweet-card__header">
-                        <img src={profile_image_url_https.replace('https:', '')} alt={`@${screen_name}`} className="tweet-card__header__profile-pic" />
+                        <img src={profile_image_url_https.replace('https:', '').replace('_normal', '')} alt={`@${screen_name}`} className="tweet-card__header__profile-pic" />
                         <div className="tweet-card__header__username">
                             <span>{name}</span>
                             <span>@{screen_name}</span>

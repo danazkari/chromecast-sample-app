@@ -12,7 +12,7 @@ body, html {
     width: 100vw;
     overflow: hidden;
     font-family: Arial, sans-serif;
-    font-size: 3em;
+    font-size: 2.6em;
 }
 
 .tweet-card {
@@ -22,7 +22,7 @@ body, html {
     margin: 0 auto;
     border: solid 1px lightblue;
     box-sizing: border-box;
-    padding: 2em;
+    padding: 0.5em;
     border-radius: 0.25em;
     box-shadow: 4px 5px 2px 1px rgba(0,0,0,0.4);
 }
