@@ -18,8 +18,16 @@
             const socket = io.connect('/');
             const { CSSTransitionGroup } = ReactTransitionGroup;
 
-            window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
-            window.castReceiverManager.start();
+            const castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
+            const messageBus = castReceiverManager.getCastMessageBus('urn:x-cast:com.gl.webapp.cast');
+            castReceiverManager.start();
+
+            castReceiverManager.onSenderDisconnected = function(event) {
+                if(castReceiverManager.getSenders().length === 0 &&
+                    event.reason === cast.receiver.system.DisconnectReason.REQUESTED_BY_SENDER) {
+                        window.close();
+                    }
+            }
 
             // Component to represent a tweet
             const Tweet = ({tweet: {text, user: { name, screen_name, profile_image_url_https }}}) => (
