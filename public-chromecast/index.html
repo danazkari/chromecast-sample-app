@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title></title>
+        <script src="https://unpkg.com/react@latest/dist/react.js"></script>
+        <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
+        <script src="https://unpkg.com/react-transition-group@1.1.3/dist/react-transition-group.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+        <link rel="stylesheet" href="./style.css">
+    </head>
+    <body>
+        <div id="root"></div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script type="text/babel">
+            // Connect to the socket
+            const socket = io.connect('/');
+            const { CSSTransitionGroup } = ReactTransitionGroup;
+
+            // Component to represent a tweet
+            const Tweet = ({tweet: {text, user: { name, screen_name, profile_image_url_https }}}) => (
+                <div className="tweet-card">
+                    <div className="tweet-card__header">
+                        <img src={profile_image_url_https.replace('https:', '')} alt={`@${screen_name}`} className="tweet-card__header__profile-pic" />
+                        <div className="tweet-card__header__username">
+                            <span>{name}</span>
+                            <span>@{screen_name}</span>
+                        </div>
+                    </div>
+                    <div className="tweet-card__body">
+                        <p>{text}</p>
+                    </div>
+                    
+                </div>
+            );
+
+            // Spinner to show when no tweets are available
+            const Spinner = () => (
+                <div className="loader">Loading...</div>
+            )
+
+            class App extends React.Component {
+                constructor() {
+                    super();
+                    this.state = {
+                        currentTweet: undefined,
+                        tweets: [] // Pool of tweets
+                    };
+
+                    const setNewTweet = () => {
+                        const tweets = [...this.state.tweets];
+                        if (tweets.length === 0) {
+                            return;
+                        }
+                        const currentTweet = tweets.shift();
+                        this.setState({
+                            currentTweet,
+                            tweets
+                        });
+                    };
+
+                    socket.on('tweet', (data) => {
+                        const { currentTweet, tweets } = this.state;
+                        if (tweets.length >= 100) {
+                            return;
+                        }
+                        // Add the new tweet to the end of the pool
+                        this.setState({
+                            tweets: [
+                                ...this.state.tweets,
+                                data
+                            ]
+                        });
+                        if (!this.state.currentTweet) {
+                            setNewTweet();
+                        }
+                    });
+                    
+                    // Interval to get the next tweet to be shown
+                    // from the pool
+                    setInterval(setNewTweet, 5000); // 10 seconds interval per tweet
+                }
+
+                render() {
+                    const { currentTweet } = this.state;
+                    return (
+                        <CSSTransitionGroup
+                            transitionName="slide"
+                            transitionEnterTimeout={500}
+                            transitionLeaveTimeout={300}
+                        >
+                            {currentTweet ?
+                                <Tweet key={currentTweet.id} tweet={currentTweet} />
+                                : <Spinner key={0} />
+                            }
+                        </CSSTransitionGroup>
+                    );
+                }
+            }
+
+            ReactDOM.render(
+                <App />,
+                document.getElementById('root')
+            );
+        </script>
+        <script src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
+    </body>
+</html>
