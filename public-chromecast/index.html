@@ -12,10 +12,14 @@
     <body>
         <div id="root"></div>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
         <script type="text/babel">
             // Connect to the socket
             const socket = io.connect('/');
             const { CSSTransitionGroup } = ReactTransitionGroup;
+
+            window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
+            window.castReceiverManager.start();
 
             // Component to represent a tweet
             const Tweet = ({tweet: {text, user: { name, screen_name, profile_image_url_https }}}) => (
@@ -103,6 +107,5 @@
                 document.getElementById('root')
             );
         </script>
-        <script src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
     </body>
 </html>

@@ -1,0 +1,14 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Helvetica, Arial, sans-serif;
+    color: #333;
+}
+
+#cast-button {
+    cursor: pointer;
+    background: none;
+    border: 0;
+    width: 100px;
+    height: 100px;
+}
